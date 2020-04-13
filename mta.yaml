@@ -1,0 +1,93 @@
+ID: manual-procedure-workflow-sample
+_schema-version: '2.1'
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: poc-workflow-appRouter
+    type: approuter.nodejs
+    path: appRouter
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: poc-workflow-runtime
+      - name: poc-workflow-portal
+      - name: poc-workflow-instance
+      - name: poc-workflow-uaa
+  - name: poc-workflow-ui_deployer
+    type: com.sap.html5.application-content
+    path: ui_deployer
+    requires:
+      - name: poc-workflow-host
+    build-parameters:
+      requires:
+        - name: startui
+          artifacts:
+            - './*'
+          target-path: resources/startui
+        - name: flexible
+          artifacts:
+            - './*'
+          target-path: resources/flexible
+  - name: poc-workflow
+    type: com.sap.application.content
+    path: workflow
+    requires:
+      - name: poc-workflow-instance
+        parameters:
+          content-target: true
+  - name: startui
+    type: html5
+    path: startui
+    build-parameters:
+      builder: grunt
+      supported-platforms: []
+      build-result: dist
+  - name: poc-workflow-flp
+    type: com.sap.portal.content
+    path: flp
+    parameters:
+      stack: cflinuxfs3
+      memory: 128M
+      buildpack: 'https://github.com/cloudfoundry/nodejs-buildpack/releases/download/v1.6.39/nodejs-buildpack-cflinuxfs3-v1.6.39.zip'
+    requires:
+      - name: poc-workflow-portal
+      - name: poc-workflow-uaa
+      - name: poc-workflow-host
+      - name: poc-workflow-ui_deployer
+      - name: poc-workflow-instance
+  - name: flexible
+    type: html5
+    path: flexible
+    build-parameters:
+      builder: grunt
+      supported-platforms: []
+      build-result: dist
+resources:
+  - name: poc-workflow-runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: poc-workflow-host
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: poc-workflow-instance
+    parameters:
+      service-plan: lite
+      service: workflow
+    type: org.cloudfoundry.managed-service
+  - name: poc-workflow-uaa
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: poc-workflow-portal
+    parameters:
+      service-plan: standard
+      service: portal
+    type: org.cloudfoundry.managed-service

@@ -1,0 +1,17 @@
+<mvc:View displayBlock="true" controllerName="com.flexible.flexible.controller.Master" height="100%" xmlns="sap.m" xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<f:DynamicPage id="dynamicPageId" toggleHeaderOnTitleClick="false">
+		<!-- DynamicPage Title -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="Master Page"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+		<!-- DynamicPage Content -->
+		<f:content>
+			<Link text="Navigate to next page…" press="handleAboutPress" />
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

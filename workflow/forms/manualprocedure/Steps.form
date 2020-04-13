@@ -1,0 +1,48 @@
+{
+    "id": "steps",
+    "name": "Steps",
+    "revision": "1.0",
+    "type": "task",
+    "readOnly": false,
+    "content": [
+        {
+            "id": "receive",
+            "type": "section",
+            "title": "Receive",
+            "content": [
+                {
+                    "id": "text",
+                    "type": "string",
+                    "label": "Text",
+                    "readOnly": false,
+                    "value": "${context.text}",
+                    "constraints": {
+                        "required": false
+                    }
+                },
+                {
+                    "id": "assign",
+                    "type": "string",
+                    "label": "Assign",
+                    "readOnly": true,
+                    "value": "${context.assign}",
+                    "constraints": {
+                        "required": false
+                    }
+                }
+            ]
+        }
+    ],
+    "decisions": [
+        {
+            "id": "accept",
+            "text": "Accept",
+            "decisionType": "positive"
+        },
+        {
+            "id": "reject",
+            "text": "Reject",
+            "decisionType": "negative"
+        }
+    ]
+}

@@ -1,0 +1,22 @@
+<mvc:View controllerName="com.test.start.startui.controller.View1" xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">
+	<Shell id="shell">
+		<App id="app">
+			<pages>
+				<Page title="Workflow Start UI">
+					<content>
+						<VBox width="100%" direction="Column" id="__vbox0">
+							<items>
+								<Label text="Text"/>
+								<Input width="100%" id="textInput" value="{/text}"/>
+								<Label text="Assign"/>
+								<Input width="100%" id="assignInput" value="{/assign}"/>
+								<Button text="Start Workflow" width="100px" id="__button0" press="startWorkflow"/>
+								<Text text="{/result}" maxLines="0" id="__text0"/>
+							</items>
+						</VBox>
+					</content>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>

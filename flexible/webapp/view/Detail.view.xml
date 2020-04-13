@@ -1,0 +1,25 @@
+<mvc:View controllerName="com.flexible.flexible.controller.Detail" xmlns="sap.m" xmlns:f="sap.f" xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:smartTable="sap.ui.comp.smarttable" xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:smartForm="sap.ui.comp.smartform">
+	<f:DynamicPage headerExpanded="false" id="detailPage">
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title text="Detail Page"/>
+				</f:heading>
+				<f:actions>
+					<Button icon="sap-icon://full-screen" type="Transparent"
+						visible="{= ${flexibleColumnLayoutConfig>/actionButtonsInfo/midColumn/fullScreen} !== null }" press="handleFullScreen"/>
+					<Button icon="sap-icon://exit-full-screen" type="Transparent"
+						visible="{= ${flexibleColumnLayoutConfig>/actionButtonsInfo/midColumn/exitFullScreen} !== null }" press="handleExitFullScreen"/>
+					<Button icon="sap-icon://decline" type="Transparent"
+						visible="{= ${flexibleColumnLayoutConfig>/actionButtonsInfo/midColumn/closeColumn} !== null }" press="handleClose"/>
+				</f:actions>
+			</f:DynamicPageTitle>
+		</f:title>
+		<!-- DynamicPage Content -->
+		<f:content>
+			<Link text="Navigate to next page…" press="handleAboutPress" />
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>
