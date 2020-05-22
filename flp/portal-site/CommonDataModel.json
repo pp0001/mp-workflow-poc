@@ -46,6 +46,10 @@
 					"id": "cross.fnd.fiori.inbox-4-1557918418298",
 					"appId": "cross.fnd.fiori.inbox",
 					"vizId": "WorkflowTask-DisplayMyInbox"
+				}, {
+					"id": "test.SelfInbox-5-1590124269162",
+					"appId": "test.SelfInbox",
+					"vizId": "workflow-selfInbox"
 				}]
 			}
 		}, {

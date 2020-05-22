@@ -13,7 +13,7 @@ modules:
     requires:
       - name: poc-workflow-runtime
       - name: poc-workflow-portal
-      - name: poc-workflow-instance
+      - name: workflow-i320869-demo
       - name: poc-workflow-uaa
   - name: poc-workflow-ui_deployer
     type: com.sap.html5.application-content
@@ -30,11 +30,15 @@ modules:
           artifacts:
             - './*'
           target-path: resources/flexible
+        - name: SelfInbox
+          artifacts:
+            - './*'
+          target-path: resources/SelfInbox
   - name: poc-workflow
     type: com.sap.application.content
     path: workflow
     requires:
-      - name: poc-workflow-instance
+      - name: workflow-i320869-demo
         parameters:
           content-target: true
   - name: startui
@@ -56,10 +60,17 @@ modules:
       - name: poc-workflow-uaa
       - name: poc-workflow-host
       - name: poc-workflow-ui_deployer
-      - name: poc-workflow-instance
+      - name: workflow-i320869-demo
   - name: flexible
     type: html5
     path: flexible
+    build-parameters:
+      builder: grunt
+      supported-platforms: []
+      build-result: dist
+  - name: SelfInbox
+    type: html5
+    path: SelfInbox
     build-parameters:
       builder: grunt
       supported-platforms: []
@@ -75,9 +86,9 @@ resources:
       service-plan: app-host
       service: html5-apps-repo
     type: org.cloudfoundry.managed-service
-  - name: poc-workflow-instance
+  - name: workflow-i320869-demo
     parameters:
-      service-plan: lite
+      service-plan: standard
       service: workflow
     type: org.cloudfoundry.managed-service
   - name: poc-workflow-uaa
