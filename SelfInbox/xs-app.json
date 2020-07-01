@@ -4,7 +4,14 @@
   "logout": {
     "logoutEndpoint": "/do/logout"
   },
-  "routes": [{
+  "routes": [
+  	{
+		"source": "^/wfs/(.*)$",
+		"target": "/workflow-service/rest/$1",
+		"service": "com.sap.bpm.workflow",
+		"endpoint": "workflow_rest_url",
+		"authenticationType": "xsuaa"
+	},{
 		"source": "^/bpmworkflowruntimeodata/(.*)$",
 		"target": "/$1",
 		"service": "com.sap.bpm.workflow",

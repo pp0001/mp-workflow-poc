@@ -1,4 +1,22 @@
 {
-    "welcomeFile": "/cp.portal",
-    "authenticationMethod": "route"
-}  
+	"welcomeFile": "/cp.portal",
+	"authenticationMethod": "route",
+	"routes": [{
+		"source": "^/wfs/(.*)$",
+		"target": "/$1",
+		"service": "com.sap.bpm.workflow",
+		"endpoint": "workflow_rest_url",
+		"authenticationType": "xsuaa"
+	}, {
+		"source": "^/bpmworkflowruntime/(.*)$",
+		"target": "/$1",
+		"service": "com.sap.bpm.workflow",
+		"endpoint": "workflow_rest_url",
+		"authenticationType": "xsuaa"
+	}, {
+		"source": "^(/.*)$",
+		"target": "$1",
+		"service": "html5-apps-repo-rt",
+		"authenticationType": "xsuaa"
+	}]
+}

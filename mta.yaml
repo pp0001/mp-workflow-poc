@@ -2,7 +2,7 @@ ID: manual-procedure-workflow-sample
 _schema-version: '2.1'
 parameters:
   deploy_mode: html5-repo
-version: 0.0.1
+version: 0.0.2
 modules:
   - name: poc-workflow-appRouter
     type: approuter.nodejs
@@ -10,11 +10,25 @@ modules:
     parameters:
       disk-quota: 256M
       memory: 256M
+      host: "controllibrary-mp-workflow-poc-approuter-${space}"
+    properties:
+      SAP_JWT_TRUST_ACL: [{"clientid":"*","identityzone":"*"}]
+      TENANT_HOST_PATTERN: '^(.*)-mp-workflow-poc-approuter-${space}'
+      T_MODE: multitenant   
     requires:
       - name: poc-workflow-runtime
       - name: poc-workflow-portal
       - name: workflow-i320869-demo
       - name: poc-workflow-uaa
+      - name: saas-test
+      #- name: backend_api
+      #  group: destinations
+      #  properties:
+      #    forwardAuthToken: true
+      #    strictSSL: false
+      #    name: backend_api
+      #    url: ~{url}
+          
   - name: poc-workflow-ui_deployer
     type: com.sap.html5.application-content
     path: ui_deployer
@@ -34,6 +48,11 @@ modules:
           artifacts:
             - './*'
           target-path: resources/SelfInbox
+        # - name: SelfMonitor
+        #   artifacts:
+        #     - './*'
+        #   target-path: resources/SelfMonitor
+          
   - name: poc-workflow
     type: com.sap.application.content
     path: workflow
@@ -41,6 +60,7 @@ modules:
       - name: workflow-i320869-demo
         parameters:
           content-target: true
+          
   - name: startui
     type: html5
     path: startui
@@ -48,6 +68,7 @@ modules:
       builder: grunt
       supported-platforms: []
       build-result: dist
+      
   - name: poc-workflow-flp
     type: com.sap.portal.content
     path: flp
@@ -61,6 +82,7 @@ modules:
       - name: poc-workflow-host
       - name: poc-workflow-ui_deployer
       - name: workflow-i320869-demo
+      
   - name: flexible
     type: html5
     path: flexible
@@ -75,30 +97,138 @@ modules:
       builder: grunt
       supported-platforms: []
       build-result: dist
+
+  - name: backend
+    type: nodejs
+    path: backend
+    properties:
+      SAP_JWT_TRUST_ACL:
+        - clientid: "*"
+          identityzone: "sap-provisioning"
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: poc-workflow-uaa
+      - name: workflow-i320869-demo
+      - name: saas-test
+      #- name: poc-workflow-hdi_db
+    provides:
+     - name: backend_api
+       properties:
+          url: ${default-url}
+
+  #- name: poc-workflow-db
+    # type: hdb
+    # path: db
+    # parameters:
+    #   memory: 1G 
+    # properties:
+    #   SAP_JWT_TRUST_ACL: [{"clientid":"*","identityzone":"sap-provisioning"}]      
+    # requires:
+    #  - name: poc-workflow-hdi_db
+
+
+  #- name: SelfMonitor
+  #  type: html5
+  #  path: SelfMonitor
+  #  build-parameters:
+  #     builder: grunt
+  #     supported-platforms: []
+  #     build-result: dist
+
 resources:
   - name: poc-workflow-runtime
     parameters:
       service-plan: app-runtime
       service: html5-apps-repo
     type: org.cloudfoundry.managed-service
+    
   - name: poc-workflow-host
     parameters:
       service-plan: app-host
       service: html5-apps-repo
     type: org.cloudfoundry.managed-service
+    
   - name: workflow-i320869-demo
     parameters:
       service-plan: standard
       service: workflow
+      config:
+        authorities:
+          - WORKFLOW_INSTANCE_START
+          - WORKFLOW_INSTANCE_GET_CONTEXT
+          - WORKFLOW_INSTANCE_GET
+          - WORKFLOW_DEFINITION_DEPLOY
+          - WORKFLOW_DEFINITION_GET
+          - WORKFLOW_DEFINITION_GET_SAMPLE_CONTEXT
     type: org.cloudfoundry.managed-service
+    
   - name: poc-workflow-uaa
+    type: com.sap.xs.uaa
     parameters:
-      path: ./xs-security.json
       service-plan: application
-      service: xsuaa
-    type: org.cloudfoundry.managed-service
+      config:
+        xsappname: mp-workflow-poc-${space}
+        tenant-mode: shared
+        scopes:
+          - name: $XSAPPNAME.Callback   # onboarding scope
+            description: Multi Tenancy Callback Access
+            grant-as-authority-to-apps: # grant this scope to onboarding infrastructure
+              - $XSAPPNAME(application,sap-provisioning,tenant-onboarding)
+          - name: $XSAPPNAME.Onboarding
+            description: Onboarding Callback Access
+            grant-as-authority-to-apps:
+              - "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+          - name: uaa.user
+            description: UAA
+          - name: $XSAPPNAME.WORKFLOW_DEFINITION_DEPLOY
+          - name: $XSAPPNAME.WORKFLOW_DEFINITION_GET
+          - name: $XSAPPNAME.WORKFLOW_DEFINITION_GET_SAMPLE_CONTEXT
+        role-templates:
+          - name: Token_Exchange
+            description: UAA
+            scope-references:
+              - uaa.user
+          - name: Workflow_Token_Exchange
+            description: Workflow_Token_Exchange
+            scope-references:
+              - $XSAPPNAME(broker,0d2ebbc5-1f6d-4076-913c-8893578b9544,workflow).WORKFLOW_INSTANCE_START
+              - $XSAPPNAME(broker,0d2ebbc5-1f6d-4076-913c-8893578b9544,workflow).EVENT_SUBSCRIPTION_CREATE
+              - $XSAPPNAME(broker,0d2ebbc5-1f6d-4076-913c-8893578b9544,workflow).EVENT_SUBSCRIPTION_DELETE
+              - $XSAPPNAME(broker,0d2ebbc5-1f6d-4076-913c-8893578b9544,workflow).WORKFLOW_DEFINITION_DEPLOY
+              - $XSAPPNAME.WORKFLOW_DEFINITION_DEPLOY
+              - $XSAPPNAME.WORKFLOW_DEFINITION_GET
+              - $XSAPPNAME.WORKFLOW_DEFINITION_GET_SAMPLE_CONTEXT
+    # parameters:
+    #   path: ./xs-security.json
+    #   service-plan: application
+    #   service: xsuaa
+    # type: org.cloudfoundry.managed-service
+    
   - name: poc-workflow-portal
     parameters:
       service-plan: standard
       service: portal
     type: org.cloudfoundry.managed-service
+    
+  - name: saas-test
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: saas-registry
+      service-plan: application
+      config:
+        displayName: 'Manual Procedures Workflow POC'
+        description: 'Manual Procedures Workflow POC'
+        appId: 'mp-workflow-poc-mpstandalone!t4702'
+        appUrls:
+          getDependencies: 'https://grcpcrmcontrollibrary-mpstandalone-backend.cfapps.sap.hana.ondemand.com/callback/v1.0/dependencies'
+          onSubscription: 'https://grcpcrmcontrollibrary-mpstandalone-backend.cfapps.sap.hana.ondemand.com/callback/v1.0/tenants/{tenantId}'
+        providerTenantId: 0d2ebbc5-1f6d-4076-913c-8893578b9544
+
+  #- name: poc-workflow-hdi_db
+  #  type: com.sap.xs.managed-hdi-container
+  #  properties:
+  #    managed-hdi-container-name: poc-workflow-hdi_db
+
+

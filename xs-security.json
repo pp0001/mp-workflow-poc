@@ -1,12 +1,19 @@
 {
   "xsappname": "manual-procedure-workflow-sample",
-  "tenant-mode": "dedicated",
+  "tenant-mode": "shared",
   "description": "Security profile of called application",
   "scopes": [
     {
       "name": "uaa.user",
       "description": "UAA"
-    }
+    },
+    {
+		"name": "$XSAPPNAME.Callback",
+		"description": "With this scope set, the callbacks for tenant onboarding, offboarding and getDependencies can be called.",
+		"grant-as-authority-to-apps": [
+			"$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+		]
+	}
   ],
   "role-templates": [
     {

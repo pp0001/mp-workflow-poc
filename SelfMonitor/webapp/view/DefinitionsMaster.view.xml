@@ -1,0 +1,42 @@
+<mvc:View
+		controllerName="test.SelfMonitor.controller.DefinitionsMaster"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:semantic="sap.m.semantic">
+	<semantic:MasterPage
+			id="definitionsMaster"
+			title="{parts:['i18n>DEFINITIONS_MASTER_HEADER', 'view>/totalCount/definitionsList/current'], formatter: 'jQuery.sap.formatMessage'}">
+		<semantic:subHeader>
+			<Toolbar>
+				<SearchField
+						search="onSearchDefinitions"
+						showRefreshButton="true"
+						showSearchButton="true"
+						width="100%"
+						value="{view>/filter/definitionsList}"/>
+						
+			</Toolbar>
+		</semantic:subHeader>
+		<semantic:content>
+			<List
+					id="definitionsList"
+					mode="SingleSelectMaster"
+					items="{ path: 'wfds>/', sorter: { path: 'name' }}"
+					busy="{view>/busy/definitionsList}"
+					itemPress="onSelectDefinition"
+					noDataText="{i18n>DEFINITIONS_MASTER_NOT_FOUND}"
+					growing="true"
+					growingScrollToLoad="true"
+					growingThreshold="1000">
+				<ObjectListItem
+						title="{wfds>name}"
+						type="Active"/>
+			</List>
+			  <List id="definitionsListFooter" visible="{= ${view>/totalCount/definitionsList/current} > ${view>/top/definitionsList}}">
+				<ActionListItem
+					text="{parts: ['i18n>DEFINITIONS_MASTER_BUTTON_MORE','view>/count/definitionsList','view>/totalCount/definitionsList/current'],formatter:'jQuery.sap.formatMessage'}"
+					press="onMorePress"/>
+			</List>
+		</semantic:content>
+	</semantic:MasterPage>
+</mvc:View>

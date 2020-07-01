@@ -1,0 +1,41 @@
+<mvc:View
+		controllerName="test.SelfMonitor.controller.DefinitionsDetail"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:uxap="sap.uxap"
+		xmlns:semantic="sap.m.semantic">
+	<semantic:DetailPage
+			id="definitionsDetail"
+			showNavButton="{device>/system/phone}"
+			navButtonPress="onNavButtonPress"
+			title="{i18n>DEFINITIONS_DETAIL_HEADER}"> <!-- floatingFooter="true" -->
+		<semantic:content>
+			<uxap:ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false"
+			                       subSectionLayout="TitleOnLeft"
+			                       showTitleInHeaderContent="false" showHeaderContent="true"
+			                       alwaysShowContentHeader="false">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader headerDesign="Light" objectTitle="{wfd>/name}">
+					</uxap:ObjectPageHeader>
+				</uxap:headerTitle>
+
+				<uxap:headerContent>
+						<ObjectStatus text="{wfd>/id}" title="{i18n>DEFINITIONS_DEF_ID}"/>
+						<ObjectStatus text="{wfd>/version}" title="{i18n>DEFINITIONS_DEF_VERSION}"/>
+					        <!--Disabled currently as it is not valid for current release-->
+						<!--<MessageStrip text="{i18n>DEFINITIONS_REDEPLOY_WARNING}" type="Information" showIcon="true" showCloseButton="false"	class="sapUiMediumMarginBottom">
+						</MessageStrip>-->
+				</uxap:headerContent>
+			</uxap:ObjectPageLayout>
+		</semantic:content>
+		<semantic:customFooterContent>
+			<Button text="{i18n>DEFINITIONS_SHOW_INSTANCES}" press="onShowInstances" type="Emphasized"/>
+		</semantic:customFooterContent>
+		<semantic:customFooterContent>
+			<Button text="{i18n>DEFINITIONS_START_INSTANCE}" press="onOpenNewInstanceDialog"/>
+		</semantic:customFooterContent>
+		<semantic:customFooterContent>
+			<Button text="{i18n>DEFINITIONS_DOWNLOAD_MODEL}" press="onDownloadWorkflowModel"/>
+		</semantic:customFooterContent>
+	</semantic:DetailPage>
+</mvc:View>
